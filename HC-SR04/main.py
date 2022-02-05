@@ -1,4 +1,5 @@
 # coding=utf-8
+# 超声波测距
 # 导入 GPIO库
 import RPi.GPIO as GPIO
 import time
@@ -7,18 +8,20 @@ import time
 GPIO.setmode(GPIO.BCM)
 
 # 定义 GPIO 引脚
-GPIO_TRIGGER = 2
-GPIO_ECHO = 3
+GPIO_TRIGGER = 18
+GPIO_ECHO = 24
 
 # 设置 GPIO 的工作方式 (IN / OUT)
 GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
 GPIO.setup(GPIO_ECHO, GPIO.IN)
 
-
 def distance():
+    #重置状态
+    time.sleep(0.5)
+    GPIO.output(GPIO_TRIGGER, False)
+    time.sleep(0.5)
     # 发送高电平信号到 Trig 引脚
     GPIO.output(GPIO_TRIGGER, True)
-
     # 持续 10 us
     time.sleep(0.00001)
     GPIO.output(GPIO_TRIGGER, False)
@@ -30,9 +33,11 @@ def distance():
     while GPIO.input(GPIO_ECHO) == 0:
         start_time = time.time()
 
+    print("start_time ===>{}".format(start_time))
     # 记录接收到返回超声波的时刻2
     while GPIO.input(GPIO_ECHO) == 1:
         stop_time = time.time()
+    print("end_time ===>{}".format(stop_time))
 
     # 计算超声波的往返时间 = 时刻2 - 时刻1
     time_elapsed = stop_time - start_time
